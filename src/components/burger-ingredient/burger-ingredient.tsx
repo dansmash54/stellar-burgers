@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from '../../services/store';
-import { addIngredient } from '../../services/slices/constructorSlice';
+import { Link, useLocation } from 'react-router-dom';
+import { useDispatch } from '../../services/store';
+import { addIngredientToConstructor } from '../../services/slices/constructorSlice';
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
 
@@ -11,16 +11,22 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const location = useLocation();
 
     const handleAdd = () => {
-      dispatch(addIngredient(ingredient));
+      dispatch(addIngredientToConstructor(ingredient));
     };
 
     return (
-      <BurgerIngredientUI
-        ingredient={ingredient}
-        count={count}
-        locationState={{ background: location }}
-        handleAdd={handleAdd}
-      />
+      <Link
+        to={`/ingredients/${ingredient._id}`}
+        state={{ background: location }}
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
+        <BurgerIngredientUI
+          ingredient={ingredient}
+          count={count}
+          locationState={{ background: location }}
+          handleAdd={handleAdd}
+        />
+      </Link>
     );
   }
 );
