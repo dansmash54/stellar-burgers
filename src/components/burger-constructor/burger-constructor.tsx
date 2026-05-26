@@ -8,29 +8,29 @@ import { BurgerConstructorUI } from '@ui';
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const constructorItems = useSelector((state) => state.burgerConstructor);
   const { orderRequest, orderModalData } = useSelector((state) => state.order);
   const user = useSelector((state) => state.user.user);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
-    
+
     // Проверка авторизации
     if (!user) {
       navigate('/login');
       return;
     }
-    
+
     const ingredientsIds = [
       constructorItems.bun._id,
       ...constructorItems.ingredients.map((item) => item._id),
       constructorItems.bun._id
     ];
-    
+
     dispatch(createOrder(ingredientsIds));
   };
-  
+
   const closeOrderModalHandler = () => {
     dispatch(closeOrderModal());
     dispatch(clearConstructor());

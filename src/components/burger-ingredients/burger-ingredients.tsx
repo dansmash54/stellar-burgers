@@ -7,27 +7,18 @@ import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 export const BurgerIngredients: FC = () => {
   const ingredients = useSelector((state) => state.ingredients.data);
   const constructorItems = useSelector((state) => state.burgerConstructor);
-  
+
   // Функция для подсчета количества ингредиента в конструкторе
   const getCount = (ingredientId: string) => {
     if (constructorItems.bun?._id === ingredientId) return 2;
-    return constructorItems.ingredients.filter((item) => item._id === ingredientId).length;
+    return constructorItems.ingredients.filter(
+      (item) => item._id === ingredientId
+    ).length;
   };
-  
-  const buns = ingredients.filter((item) => item.type === 'bun').map((item) => ({
-    ...item,
-    count: getCount(item._id)
-  }));
-  
-  const mains = ingredients.filter((item) => item.type === 'main').map((item) => ({
-    ...item,
-    count: getCount(item._id)
-  }));
-  
-  const sauces = ingredients.filter((item) => item.type === 'sauce').map((item) => ({
-    ...item,
-    count: getCount(item._id)
-  }));
+
+  const buns = ingredients.filter((item) => item.type === 'bun');
+  const mains = ingredients.filter((item) => item.type === 'main');
+  const sauces = ingredients.filter((item) => item.type === 'sauce');
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -69,9 +60,9 @@ export const BurgerIngredients: FC = () => {
   return (
     <BurgerIngredientsUI
       currentTab={currentTab}
-      buns={buns}
-      mains={mains}
-      sauces={sauces}
+      buns={buns.map((item) => ({ ...item, count: getCount(item._id) }))}
+      mains={mains.map((item) => ({ ...item, count: getCount(item._id) }))}
+      sauces={sauces.map((item) => ({ ...item, count: getCount(item._id) }))}
       titleBunRef={titleBunRef}
       titleMainRef={titleMainRef}
       titleSaucesRef={titleSaucesRef}

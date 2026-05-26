@@ -28,11 +28,12 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    const updatedData: { name?: string; email?: string; password?: string } = {};
+    const updatedData: { name?: string; email?: string; password?: string } =
+      {};
     if (formValue.name !== user?.name) updatedData.name = formValue.name;
     if (formValue.email !== user?.email) updatedData.email = formValue.email;
     if (formValue.password) updatedData.password = formValue.password;
-    
+
     dispatch(updateUser(updatedData))
       .unwrap()
       .then(() => {

@@ -7,25 +7,41 @@ import { FC } from 'react';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
-  const { orders, loading } = useSelector((state) => state.feed);
+  const { orders, total, totalToday, loading } = useSelector(
+    (state) => state.feed
+  );
 
   useEffect(() => {
-    console.log('fetchFeeds called');
     dispatch(fetchFeeds());
   }, [dispatch]);
-
-  useEffect(() => {
-    console.log('orders:', orders);
-    console.log('loading:', loading);
-  }, [orders, loading]);
 
   const handleGetFeeds = () => {
     dispatch(fetchFeeds());
   };
 
+  // Готовим данные для статусов
+  const readyOrders = orders
+    .filter((order) => order.status === 'done')
+    .map((order) => order.number)
+    .slice(0, 20);
+
+  const pendingOrders = orders
+    .filter((order) => order.status === 'pending')
+    .map((order) => order.number)
+    .slice(0, 20);
+
   if (loading) {
     return <Preloader />;
   }
 
-  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
+  return (
+    <FeedUI
+      orders={orders}
+      total={total}
+      totalToday={totalToday}
+      readyOrders={readyOrders}
+      pendingOrders={pendingOrders}
+      handleGetFeeds={handleGetFeeds}
+    />
+  );
 };

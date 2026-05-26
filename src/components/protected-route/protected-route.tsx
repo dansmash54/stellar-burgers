@@ -7,7 +7,10 @@ type TProtectedRouteProps = {
   children: ReactElement;
 };
 
-export const ProtectedRoute: FC<TProtectedRouteProps> = ({ onlyUnAuth, children }) => {
+export const ProtectedRoute: FC<TProtectedRouteProps> = ({
+  onlyUnAuth,
+  children
+}) => {
   const user = useSelector((state) => state.user.user);
   const isAuthChecked = useSelector((state) => state.user.isAuthChecked);
   const location = useLocation();
@@ -22,7 +25,7 @@ export const ProtectedRoute: FC<TProtectedRouteProps> = ({ onlyUnAuth, children 
   }
 
   if (!onlyUnAuth && !user) {
-    return <Navigate to="/login" state={{ from: location }} />;
+    return <Navigate to='/login' state={{ from: location }} />;
   }
 
   return children;
