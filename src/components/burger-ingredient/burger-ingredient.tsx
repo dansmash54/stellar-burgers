@@ -1,5 +1,5 @@
 import { FC, memo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDispatch } from '../../services/store';
 import { addIngredientToConstructor } from '../../services/slices/constructorSlice';
 import { BurgerIngredientUI } from '@ui';
@@ -15,18 +15,12 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     };
 
     return (
-      <Link
-        to={`/ingredients/${ingredient._id}`}
-        state={{ background: location }}
-        style={{ textDecoration: 'none', color: 'inherit' }}
-      >
-        <BurgerIngredientUI
-          ingredient={ingredient}
-          count={count}
-          locationState={{ background: location }}
-          handleAdd={handleAdd}
-        />
-      </Link>
+      <BurgerIngredientUI
+        ingredient={ingredient}
+        count={count}
+        locationState={{ background: location }}
+        handleAdd={handleAdd}
+      />
     );
   }
 );

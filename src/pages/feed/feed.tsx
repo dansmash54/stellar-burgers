@@ -19,7 +19,6 @@ export const Feed: FC = () => {
     dispatch(fetchFeeds());
   };
 
-  // Готовим данные для статусов
   const readyOrders = orders
     .filter((order) => order.status === 'done')
     .map((order) => order.number)

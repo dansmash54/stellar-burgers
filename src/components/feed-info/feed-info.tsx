@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useSelector } from '../../services/store';
+
 import { FeedInfoUI } from '../ui/feed-info';
 
 export const FeedInfo: FC<{
