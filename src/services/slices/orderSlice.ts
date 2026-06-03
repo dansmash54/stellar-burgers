@@ -1,17 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '@api';
+import { orderBurgerApi, getOrderByNumberApi } from '@api';
 import { clearConstructor } from './constructorSlice';
 import { TOrder } from '@utils-types';
 
 interface IOrderState {
   orderRequest: boolean;
   orderModalData: TOrder | null;
+  orderByNumber: TOrder | null;
+  isLoading: boolean;
   error: string | null;
 }
 
 const initialState: IOrderState = {
   orderRequest: false,
   orderModalData: null,
+  orderByNumber: null,
+  isLoading: false,
   error: null
 };
 
@@ -20,7 +24,6 @@ export const createOrder = createAsyncThunk(
   async (data: string[], { dispatch }) => {
     const response = await orderBurgerApi(data);
     dispatch(clearConstructor());
-    // Создаем объект, совместимый с TOrder
     const orderData: TOrder = {
       _id: response.order._id,
       status: response.order.status,
@@ -34,6 +37,14 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+export const getOrderByNumber = createAsyncThunk(
+  'order/getByNumber',
+  async (number: number) => {
+    const response = await getOrderByNumberApi(number);
+    return response.orders[0];
+  }
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -44,6 +55,7 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // createOrder
       .addCase(createOrder.pending, (state) => {
         state.orderRequest = true;
         state.error = null;
@@ -55,6 +67,19 @@ const orderSlice = createSlice({
       .addCase(createOrder.rejected, (state, action) => {
         state.orderRequest = false;
         state.error = action.error.message || 'Ошибка создания заказа';
+      })
+      // getOrderByNumber
+      .addCase(getOrderByNumber.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderByNumber = action.payload;
+      })
+      .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Ошибка получения заказа';
       });
   }
 });
