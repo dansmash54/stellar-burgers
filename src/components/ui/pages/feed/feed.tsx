@@ -2,6 +2,7 @@ import { FC, memo } from 'react';
 import styles from './feed.module.css';
 import { OrdersList, FeedInfo } from '@components';
 import { FeedUIProps } from './type';
+import { RefreshButton } from '@zlden/react-developer-burger-ui-components';
 
 export const FeedUI: FC<FeedUIProps> = memo(
   ({
@@ -12,24 +13,28 @@ export const FeedUI: FC<FeedUIProps> = memo(
     pendingOrders,
     handleGetFeeds
   }) => (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <h1 className='text text_type_main-large'>Лента заказов</h1>
-        <div className={styles.content}>
-          <div className={styles.orders}>
-            <OrdersList orders={orders} />
-          </div>
-          <div className={styles.info}>
-            <FeedInfo
-              readyOrders={readyOrders}
-              pendingOrders={pendingOrders}
-              total={total}
-              totalToday={totalToday}
-            />
-            <button onClick={handleGetFeeds} className={styles.button}>
-              Обновить
-            </button>
-          </div>
+    <main className={styles.containerMain}>
+      <div className={`${styles.titleBox} mt-10 mb-5`}>
+        <h1 className={`${styles.title} text text_type_main-large`}>
+          Лента заказов
+        </h1>
+        <RefreshButton
+          text='Обновить'
+          onClick={handleGetFeeds}
+          extraClass={'ml-30'}
+        />
+      </div>
+      <div className={styles.main}>
+        <div className={styles.columnOrders}>
+          <OrdersList orders={orders} />
+        </div>
+        <div className={styles.columnInfo}>
+          <FeedInfo
+            readyOrders={readyOrders}
+            pendingOrders={pendingOrders}
+            total={total}
+            totalToday={totalToday}
+          />
         </div>
       </div>
     </main>

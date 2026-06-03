@@ -22,7 +22,7 @@
   color: var(--text-inactive-color);
 }
 
-.link:hover {
+.link_active {
   color: var(--text-primary-color);
 }
 
