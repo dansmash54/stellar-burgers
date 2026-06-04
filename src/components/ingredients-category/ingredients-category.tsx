@@ -9,20 +9,20 @@ export const IngredientsCategory = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryProps
 >(({ title, titleRef, ingredients }, ref) => {
-  const buns = useSelector(getBun);
-  const ingridients = useSelector(getIngredients);
+  const constructorBuns = useSelector(getBun);
+  const constructorIndgridients = useSelector(getIngredients);
 
   const ingredientsCounters = useMemo(() => {
     const counters: Record<string, number> = {};
 
-    ingredients.forEach((ingredient: TIngredient) => {
+    constructorIndgridients.forEach((ingredient: TIngredient) => {
       if (!counters[ingredient._id]) counters[ingredient._id] = 0;
 
       counters[ingredient._id]++;
     });
-    if (buns) counters[buns._id] = 2;
+    if (constructorBuns) counters[constructorBuns._id] = 2;
     return counters;
-  }, [buns, ingridients]);
+  }, [constructorBuns, constructorIndgridients]);
 
   return (
     <IngredientsCategoryUI
