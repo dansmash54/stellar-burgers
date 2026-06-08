@@ -121,7 +121,12 @@ const userSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
       });
+  },
+  selectors: {
+    getCurrentUserName: (state) => state.user?.name
   }
 });
+
+export const { getCurrentUserName } = userSlice.selectors;
 
 export default userSlice.reducer;

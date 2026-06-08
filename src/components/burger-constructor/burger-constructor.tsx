@@ -3,14 +3,34 @@ import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import { createOrder, closeOrderModal } from '../../services/slices/orderSlice';
 import { BurgerConstructorUI } from '@ui';
+import { getBun, getIngredients } from '../../services/slices/constructorSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const constructorItems = useSelector((state) => state.burgerConstructor);
+  const bun = useSelector(getBun);
+  const ingredients = useSelector(getIngredients);
+
   const { orderRequest, orderModalData } = useSelector((state) => state.order);
   const user = useSelector((state) => state.user.user);
+
+  const constructorItems = useMemo(
+    () => ({
+      bun,
+      ingredients
+    }),
+    [bun, ingredients]
+  );
+
+  const price = useMemo(() => {
+    const bunPrice = constructorItems.bun ? constructorItems.bun.price * 2 : 0;
+    const ingredientsPrice = constructorItems.ingredients.reduce(
+      (s, v) => s + v.price,
+      0
+    );
+    return bunPrice + ingredientsPrice;
+  }, [constructorItems]);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
@@ -32,15 +52,6 @@ export const BurgerConstructor: FC = () => {
   const closeOrderModalHandler = () => {
     dispatch(closeOrderModal());
   };
-
-  const price = useMemo(() => {
-    const bunPrice = constructorItems.bun ? constructorItems.bun.price * 2 : 0;
-    const ingredientsPrice = constructorItems.ingredients.reduce(
-      (s, v) => s + v.price,
-      0
-    );
-    return bunPrice + ingredientsPrice;
-  }, [constructorItems]);
 
   return (
     <BurgerConstructorUI

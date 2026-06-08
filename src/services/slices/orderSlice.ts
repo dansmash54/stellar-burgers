@@ -21,19 +21,27 @@ const initialState: IOrderState = {
 
 export const createOrder = createAsyncThunk(
   'order/create',
-  async (data: string[], { dispatch }) => {
-    const response = await orderBurgerApi(data);
-    dispatch(clearConstructor());
-    const orderData: TOrder = {
-      _id: response.order._id,
-      status: response.order.status,
-      name: response.order.name,
-      createdAt: response.order.createdAt,
-      updatedAt: response.order.updatedAt,
-      number: response.order.number,
-      ingredients: []
-    };
-    return orderData;
+  async (data: string[], { dispatch, rejectWithValue }) => {
+    try {
+      const response = await orderBurgerApi(data);
+      dispatch(clearConstructor());
+
+      const orderData: TOrder = {
+        _id: response.order._id,
+        status: response.order.status,
+        name: response.order.name,
+        createdAt: response.order.createdAt,
+        updatedAt: response.order.updatedAt,
+        number: response.order.number,
+        ingredients: data
+      };
+
+      return orderData;
+    } catch (error) {
+      return rejectWithValue(
+        (error as Error).message ?? 'Не удалось оформить заказа'
+      );
+    }
   }
 );
 

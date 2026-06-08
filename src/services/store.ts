@@ -9,6 +9,7 @@ import constructorReducer from './slices/constructorSlice';
 import userReducer from './slices/userSlice';
 import orderReducer from './slices/orderSlice';
 import feedReducer from './slices/feedSlice';
+import ordersHistoryReducer from './slices/ordersHistorySlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,7 +17,8 @@ export const store = configureStore({
     burgerConstructor: constructorReducer,
     user: userReducer,
     order: orderReducer,
-    feed: feedReducer
+    feed: feedReducer,
+    ordersHistory: ordersHistoryReducer
   },
   devTools: process.env.NODE_ENV !== 'production'
 });

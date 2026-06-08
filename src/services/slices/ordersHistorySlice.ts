@@ -16,16 +16,18 @@ const initialState: IOrdersHistoryState = {
 
 export const fetchOrdersHistory = createAsyncThunk(
   'ordersHistory/fetch',
-  async () => {
-    const orders = await getOrdersApi();
-    return orders;
-  }
+  async () => await getOrdersApi()
 );
 
 const ordersHistorySlice = createSlice({
   name: 'ordersHistory',
   initialState,
   reducers: {},
+  selectors: {
+    getOrders: (state) => state.orders,
+    getOrdersLoadingStatus: (state) => state.loading,
+    getOrdersErrorStatus: (state) => state.error
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrdersHistory.pending, (state) => {
@@ -42,5 +44,8 @@ const ordersHistorySlice = createSlice({
       });
   }
 });
+
+export const { getOrders, getOrdersLoadingStatus, getOrdersErrorStatus } =
+  ordersHistorySlice.selectors;
 
 export default ordersHistorySlice.reducer;
