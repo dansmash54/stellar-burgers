@@ -6,7 +6,7 @@ test.describe('Конструктор бургера', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        path: 'tests/hars/ingredients.json',
+        path: 'tests/hars/ingredients.json'
       })
     );
 
@@ -14,7 +14,7 @@ test.describe('Конструктор бургера', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        path: 'tests/hars/order.json',
+        path: 'tests/hars/order.json'
       })
     );
 
@@ -22,7 +22,7 @@ test.describe('Конструктор бургера', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        path: 'tests/hars/user.json',
+        path: 'tests/hars/user.json'
       })
     );
   });
@@ -31,18 +31,24 @@ test.describe('Конструктор бургера', () => {
     await page.goto('/');
     await page.waitForSelector('[data-testid="ingredient"]');
 
-    const bun = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Краторная булка' }).first();
-    const constructor = page.locator('[data-testid="constructor"]');
-
-    await bun.dragTo(constructor);
-    await expect(page.locator('[data-testid="constructor-bun-top"]')).toBeVisible();
+    const bun = page
+      .locator('[data-testid="ingredient"]')
+      .filter({ hasText: 'Краторная булка' })
+      .first();
+    await bun.locator('button').filter({ hasText: 'Добавить' }).click();
+    await expect(
+      page.locator('[data-testid="constructor-bun-top"]')
+    ).toBeVisible();
   });
 
   test('Открытие и закрытие модального окна ингредиента', async ({ page }) => {
     await page.goto('/');
     await page.waitForSelector('[data-testid="ingredient"]');
 
-    const ingredient = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Биокотлета' }).first();
+    const ingredient = page
+      .locator('[data-testid="ingredient"]')
+      .filter({ hasText: 'Биокотлета' })
+      .first();
     await ingredient.click();
 
     const modal = page.locator('[data-testid="modal"]');
@@ -59,22 +65,27 @@ test.describe('Конструктор бургера', () => {
         name: 'accessToken',
         value: 'test-access-token',
         domain: 'localhost',
-        path: '/',
-      },
+        path: '/'
+      }
     ]);
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       localStorage.setItem('refreshToken', 'test-refresh-token');
     });
 
     await page.goto('/');
     await page.waitForSelector('[data-testid="ingredient"]');
 
-    const bun = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Краторная булка' }).first();
-    const constructor = page.locator('[data-testid="constructor"]');
-    await bun.dragTo(constructor);
+    const bun = page
+      .locator('[data-testid="ingredient"]')
+      .filter({ hasText: 'Краторная булка' })
+      .first();
+    await bun.locator('button').filter({ hasText: 'Добавить' }).click();
 
-    const main = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Биокотлета' }).first();
-    await main.dragTo(constructor);
+    const main = page
+      .locator('[data-testid="ingredient"]')
+      .filter({ hasText: 'Биокотлета' })
+      .first();
+    await main.locator('button').filter({ hasText: 'Добавить' }).click();
 
     await page.locator('[data-testid="order-button"]').click();
 
