@@ -1,14 +1,24 @@
 import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
-
+import { useSelector } from '../../services/store';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-  const buns = [];
-  const mains = [];
-  const sauces = [];
+  const ingredients = useSelector((state) => state.ingredients.data);
+  const constructorItems = useSelector((state) => state.burgerConstructor);
+
+  // Функция для подсчета количества ингредиента в конструкторе
+  const getCount = (ingredientId: string) => {
+    if (constructorItems.bun?._id === ingredientId) return 2;
+    return constructorItems.ingredients.filter(
+      (item) => item._id === ingredientId
+    ).length;
+  };
+
+  const buns = ingredients.filter((item) => item.type === 'bun');
+  const mains = ingredients.filter((item) => item.type === 'main');
+  const sauces = ingredients.filter((item) => item.type === 'sauce');
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -47,14 +57,12 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return null;
-
   return (
     <BurgerIngredientsUI
       currentTab={currentTab}
-      buns={buns}
-      mains={mains}
-      sauces={sauces}
+      buns={buns.map((item) => ({ ...item, count: getCount(item._id) }))}
+      mains={mains.map((item) => ({ ...item, count: getCount(item._id) }))}
+      sauces={sauces.map((item) => ({ ...item, count: getCount(item._id) }))}
       titleBunRef={titleBunRef}
       titleMainRef={titleMainRef}
       titleSaucesRef={titleSaucesRef}

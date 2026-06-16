@@ -1,13 +1,11 @@
-import React, { FC, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { FC, memo } from 'react';
+import styles from './order-card.module.css';
 import {
   CurrencyIcon,
   FormattedDate
 } from '@zlden/react-developer-burger-ui-components';
-
-import styles from './order-card.module.css';
-
 import { OrderCardUIProps } from './type';
+import { Link } from 'react-router-dom';
 import { OrderStatus } from '@components';
 
 export const OrderCardUI: FC<OrderCardUIProps> = memo(
@@ -35,8 +33,9 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
       <div className={`pt-6 ${styles.order_content}`}>
         <ul className={styles.ingredients}>
           {orderInfo.ingredientsToShow.map((ingredient, index) => {
-            let zIndex = maxIngredients - index;
-            let right = 20 * index;
+            const zIndex = maxIngredients - index;
+            const right = 20 * index;
+
             return (
               <li
                 className={styles.img_wrap}
