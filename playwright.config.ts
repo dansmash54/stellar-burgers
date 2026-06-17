@@ -8,9 +8,8 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run start -- --no-client-overlay',
+    command: 'npm run start',
     url: 'http://localhost:4000',
-    reuseExistingServer: false,
-    timeout: 120000,
+    reuseExistingServer: true,
   },
 });
