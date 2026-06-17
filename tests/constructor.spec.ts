@@ -2,87 +2,86 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Конструктор бургера', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('*/**/api/ingredients', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        path: 'tests/hars/ingredients.json',
-      })
-    );
-
-    await page.route('*/**/api/orders', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        path: 'tests/hars/order.json',
-      })
-    );
-
-    await page.route('*/**/api/auth/user', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        path: 'tests/hars/user.json',
-      })
-    );
+    await page.routeFromHAR('tests/hars/constructor.har', {
+      url: '**/api/**',
+      notFound: 'abort',
+    });
   });
 
   test('Добавление ингредиента в конструктор', async ({ page }) => {
     await page.goto('/');
-    await page.waitForSelector('[data-testid="ingredient"]');
+    await expect(page.getByTestId('ingredient').first()).toBeVisible();
 
-    const bun = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Краторная булка' }).first();
-    const constructor = page.locator('[data-testid="constructor"]');
+    const bun = page
+      .getByTestId('ingredient')
+      .filter({ hasText: 'Краторная булка' })
+      .first();
+    await bun.locator('button').filter({ hasText: 'Добавить' }).click();
 
-    await bun.dragTo(constructor);
-    await expect(page.locator('[data-testid="constructor-bun-top"]')).toBeVisible();
+    await expect(page.getByTestId('constructor-bun-top')).toBeVisible();
+    await expect(page.getByTestId('constructor-bun-top')).toContainText(
+      'Краторная булка'
+    );
   });
 
   test('Открытие и закрытие модального окна ингредиента', async ({ page }) => {
     await page.goto('/');
-    await page.waitForSelector('[data-testid="ingredient"]');
+    await expect(page.getByTestId('ingredient').first()).toBeVisible();
 
-    const ingredient = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Биокотлета' }).first();
+    const ingredient = page
+      .getByTestId('ingredient')
+      .filter({ hasText: 'Биокотлета' })
+      .first();
+
     await ingredient.click();
-
-    const modal = page.locator('[data-testid="modal"]');
+    const modal = page.getByTestId('modal');
     await expect(modal).toBeVisible();
     await expect(modal).toContainText('Биокотлета');
 
-    await page.locator('[data-testid="modal-close"]').click();
+    await page.getByTestId('modal-close').click();
     await expect(modal).not.toBeVisible();
   });
 
-  test('Создание заказа', async ({ page, context }) => {
+  test('Создание заказа и очистка конструктора', async ({ page, context }) => {
     await context.addCookies([
       {
         name: 'accessToken',
-        value: 'test-access-token',
-        domain: 'localhost',
-        path: '/',
+        value: 'Bearer mock-access-token',
+        url: 'http://localhost:4000',
       },
     ]);
-    await page.evaluate(() => {
-      localStorage.setItem('refreshToken', 'test-refresh-token');
+    await page.addInitScript(() => {
+      localStorage.setItem('refreshToken', 'mock-refresh-token');
     });
 
     await page.goto('/');
-    await page.waitForSelector('[data-testid="ingredient"]');
+    await expect(page.getByTestId('ingredient').first()).toBeVisible();
 
-    const bun = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Краторная булка' }).first();
-    const constructor = page.locator('[data-testid="constructor"]');
-    await bun.dragTo(constructor);
+    const bun = page
+      .getByTestId('ingredient')
+      .filter({ hasText: 'Краторная булка' })
+      .first();
+    await bun.locator('button').filter({ hasText: 'Добавить' }).click();
 
-    const main = page.locator('[data-testid="ingredient"]').filter({ hasText: 'Биокотлета' }).first();
-    await main.dragTo(constructor);
+    const main = page
+      .getByTestId('ingredient')
+      .filter({ hasText: 'Биокотлета' })
+      .first();
+    await main.locator('button').filter({ hasText: 'Добавить' }).click();
 
-    await page.locator('[data-testid="order-button"]').click();
+    await page.getByTestId('order-button').click();
 
-    const modal = page.locator('[data-testid="modal"]');
+    const modal = page.getByTestId('modal');
     await expect(modal).toBeVisible();
     await expect(modal).toContainText('99999');
 
-    await page.locator('[data-testid="modal-close"]').click();
+    await page.getByTestId('modal-close').click();
     await expect(modal).not.toBeVisible();
+
+    await expect(page.getByTestId('constructor-bun-top')).not.toBeVisible();
+    await expect(page.getByTestId('constructor-bun-bottom')).not.toBeVisible();
+
+    await context.clearCookies();
+    await page.evaluate(() => localStorage.clear());
   });
 });

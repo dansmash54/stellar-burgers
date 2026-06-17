@@ -1,6 +1,4 @@
-import ingredientsReducer, {
-  fetchIngredients
-} from '../ingredientsSlice';
+import ingredientsReducer, { fetchIngredients } from '../ingredientsSlice';
 import { TIngredient } from '@utils-types';
 
 const initialState = {
