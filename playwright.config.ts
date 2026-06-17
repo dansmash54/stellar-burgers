@@ -10,6 +10,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run start -- --no-client-overlay',
     url: 'http://localhost:4000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
+    timeout: 120000,
   },
 });
